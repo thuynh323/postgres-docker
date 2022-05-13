@@ -1,6 +1,4 @@
-
-
-
+# Setup Instructions
 1. Install Docker Desktop and Docker Compose. More instruction [here](https://docs.docker.com/compose/install/).</br>
 2. Create project structure as follows:
 ```
@@ -16,14 +14,14 @@ myproject
  ┗ test-init.sql
  ```
  3. Open Docker Desktop.
- 4. In your terminal, start Postgres in Detached mode. Docker compose will create two containers with two databases: production and analytics.
+ 4. In your terminal, start Postgres in Detached mode. Docker compose will create two containers (prod- and test-). You can also uncomment the third service setup in docker-compose.yml to create a Jupyter Notebook that can be linked to the databases. Please note it might take some time to set up.
 ```bash
 $ docker-compose up -d
 Creating network "myproject_default" with the default driver
 Creating prod-container ... done
 Creating test-container ... done
 ```
-5. Connect to analytics database.
+5. prod-container includes prod-db which is the "live production transaction database"; test-container include test-db (analytics database) with empty tables that can be used to replicate data from prod-db. Now connect to test-db.
 ```bash
 $ docker exec -it test-container psql dbuser -d test-db
 psql (14.2 (Debian 14.2-1.pgdg110+1))
@@ -31,14 +29,14 @@ Type "help" for help.
 
 test-db=# 
 ```
-6. Replicate tables from production database.
+6. Replicate tables from prod-db.
 ```bash
 test-db=# CREATE SUBSCRIPTION tsub CONNECTION 'host=prod-container dbname=prod-db user=replicator password=123456' PUBLICATION ppub;
 NOTICE:  created replication slot "tsub" on publisher
 CREATE SUBSCRIPTION
 test-db=# 
 ```
-7.
+7. Check if tables are filled.
 ```
 test-db=# \d+
                                      List of relations
@@ -51,7 +49,7 @@ test-db=# \d+
 
 test-db=#
 ```
-8.
+8. Create a new schema.
 ```
 test-db=# CREATE SCHEMA myschema;
 CREATE SCHEMA
@@ -61,7 +59,7 @@ ALTER TABLE
 ALTER TABLE
 test-db=#
 ```
-9.
+9. Change search path to access new schema.
 ```
 test-db=# SET search_path=myschema;
 SET
@@ -76,7 +74,7 @@ test-db=# \d+
 
 test-db=#
 ```
-10.
+10. Create foreign keys to link data tables.
 ```
 test-db=# ALTER TABLE clicks ADD CONSTRAINT clicks_fk FOREIGN KEY (rate_table_offer_id) REFERENCES rate_tables (rate_table_offer_id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE
@@ -84,7 +82,7 @@ test-db=# ALTER TABLE rate_tables ADD CONSTRAINT rate_tables_fk FOREIGN KEY (lea
 ALTER TABLE
 test-db=#
 ```
-11.
+11. Check clicks table. This table has rate_table_offer_id as its primary key (PK) and also its foreign key (FK) to link with rate_tables table (one-one relationship).
 ```
 test-db=# \d clicks
                               Table "myschema.clicks"
@@ -101,7 +99,7 @@ Foreign-key constraints:
 
 test-db=#
 ```
-12.
+12. Check leads table. This table has lead_uuid as its primary key (PK) to link with rate_tables table (one-many relationship).
 ```
 test-db=# \d leads
                                 Table "myschema.leads"
@@ -126,7 +124,7 @@ Referenced by:
 
 test-db=#
 ```
-13.
+13. Check rate_tables. This table has rate_table_offer_id as its primary key (PK) and also its foreign key (FK) to link with clicks table (one-one relationship).
 ```
 test-db=# \d rate_tables
                                 Table "myschema.rate_tables"
@@ -152,3 +150,4 @@ Referenced by:
 
 test-db=#
 ```
+14. If you choose to create a Jupyter Notebook, you can find a URL in Docker jupyter-container. Open this URL in your browser to access your notebook.
