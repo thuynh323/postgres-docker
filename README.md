@@ -164,3 +164,4 @@ Referenced by:
 test-db=#
 ```
 14. If you choose to create a Jupyter Notebook, you can find a URL in Docker jupyter-container. Open this URL in your browser to access your notebook.
+15. To stop Docker, use docker-compose stop.
