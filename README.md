@@ -1,5 +1,5 @@
 # Setup Instructions
-1. Install Docker Desktop and Docker Compose. More instruction [here](https://docs.docker.com/compose/install/).</br>
+1. Install Docker Desktop and Docker Compose. More instruction [here](https://www.docker.com/get-started/) and [here](https://docs.docker.com/compose/install/)</br>
 2. Create project structure as follows:
 ```
 myproject
