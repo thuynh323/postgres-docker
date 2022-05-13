@@ -13,6 +13,19 @@ myproject
  ┣ prod-init.sql
  ┗ test-init.sql
  ```
+ Use pandas.read_parquet to read parquet files, then convert these files to csv.
+ ```python
+ # Install pyparrow if you don't have it (pip install pyparrow)
+
+import pandas as pd
+clicks = pd.read_parquet('clicks.parquet.gzip')
+leads = pd.read_parquet('leads.parquet.gzip')
+rate_tables = pd.read_parquet('rate_tables.parquet.gzip')
+
+clicks.to_csv('clicks.csv')
+leads.to_csv('clicks.csv')
+rate_tables.to_csv('clicks.csv')
+```
  3. Open Docker Desktop.
  4. In your terminal, start Postgres in Detached mode. Docker compose will create two containers (prod- and test-). You can also uncomment the third service setup in docker-compose.yml to create a Jupyter Notebook that can be linked to the databases. Please note it might take some time to set up.
 ```bash
