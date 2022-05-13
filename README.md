@@ -27,7 +27,7 @@ leads.to_csv('clicks.csv')
 rate_tables.to_csv('clicks.csv')
 ```
  3. Open Docker Desktop.
- 4. In your terminal, start Postgres in Detached mode. Docker compose will create two containers (prod- and test-). You can also uncomment the third service setup in docker-compose.yml to create a Jupyter Notebook that can be linked to the databases. Please note it might take some time to set up.
+ 4. In your terminal, start docker compose in Detached mode. Docker compose will create two containers (prod- and test-). You can also uncomment the third service setup in docker-compose.yml to create a Jupyter Notebook that can be linked to the databases. Please note it might take some time to set up.
 ```bash
 $ docker-compose up -d
 Creating network "myproject_default" with the default driver
