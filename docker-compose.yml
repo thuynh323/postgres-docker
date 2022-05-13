@@ -1,0 +1,49 @@
+version: '3'
+services:
+  prod:
+    image: postgres
+    container_name: prod-container
+    restart: always
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=prod-db
+    ports:
+      - '4321:5432'
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "listen_addresses=*"
+    volumes:
+      - ./data:/data
+      - ./conf_file:/etc/pg_hba.conf
+      - ./prod-init.sql:/docker-entrypoint-initdb.d/prod-init.sql
+      
+
+  prod-test:
+    image: postgres
+    container_name: test-container
+    restart: always
+    environment:
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=test-db
+    depends_on:
+      - prod
+    ports:
+      - '4322:5432'
+    volumes:
+      - ./conf_file:/etc/pg_hba.conf
+      - ./test-init.sql:/docker-entrypoint-initdb.d/test-init.sql
+
+# Run setup below only when you want to create a container to link to the databases with Jupyter Notebook
+#  jupyter:
+#    container_name: jupyter-container
+#    image: jupyter/scipy-notebook
+#    ports:
+#      - '8888:8888'
+#    volumes:
+#      - ./notebooks:/notebooks
+#      - ./data:/data
